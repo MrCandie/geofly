@@ -57,14 +57,14 @@ export const googleAuth = passport.authenticate("google", {
 
 export const googleAuthCallback = [
   passport.authenticate("google", {
-    failureRedirect: `${process.env.APP_URL}/login`,
+    failureRedirect: `https://geofly-frontend-dun.vercel.app/login`,
     session: false,
   }),
   async (req: Request, res: Response) => {
     const user: any = req.user;
 
     if (!user) {
-      return res.redirect(`${process.env.APP_URL}/login`);
+      return res.redirect(`https://geofly-frontend-dun.vercel.app/login`);
     }
     const JWT_SECRET = process.env.JWT_SECRET as string;
     const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN as string;
@@ -73,7 +73,7 @@ export const googleAuthCallback = [
     });
 
     res.redirect(
-      `${process.env.APP_URL}?token=${token}&email=${user.email}&name=${user.fullName}`,
+      `https://geofly-frontend-dun.vercel.app?token=${token}&email=${user.email}&name=${user.fullName}`,
     );
   },
 ];
