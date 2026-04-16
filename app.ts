@@ -68,7 +68,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("<h1>WELCOME TO GOFLY</h1>");
+  res.send("<h1>WELCOME TO GOLAFLY</h1>");
 });
 
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -91,7 +91,6 @@ app.all(/.*/, (req: Request, res: Response, next: NextFunction) => {
 app.use(globalErrorController);
 
 const db: string | undefined = process.env.DATABASE;
-console.log(db);
 
 async function startServer(): Promise<void> {
   const port = process.env.PORT || 8080;
