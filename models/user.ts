@@ -55,44 +55,11 @@ const schema = new mongoose.Schema<IUser>(
   },
 );
 
-schema.pre<IUser>("save", async function (this: IUser, next: any) {
-  if (!this.isModified("password")) return next();
-
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(String(this.password), salt);
-
-  next();
-});
-
 schema.methods.verifyPassword = async function (
   enteredPassword: string,
   password: string,
 ): Promise<boolean> {
   return bcrypt.compare(enteredPassword, password);
-};
-
-schema.methods.createPasswordResetToken = function (): string {
-  const token = crypto.randomBytes(20).toString("hex");
-
-  this.passwordResetToken = crypto
-    .createHash("sha256")
-    .update(token)
-    .digest("hex");
-
-  this.passwordResetExpires = new Date(Date.now() + 10 * 60 * 1000);
-
-  return token;
-};
-
-schema.methods.createAccountVerificationToken = function (): string {
-  const token = crypto.randomBytes(20).toString("hex");
-
-  this.accountVerificationToken = crypto
-    .createHash("sha256")
-    .update(token)
-    .digest("hex");
-
-  return token;
 };
 
 schema.methods.passwordChanged = function (jwtTime: number): boolean {

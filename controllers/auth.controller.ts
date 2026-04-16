@@ -7,7 +7,7 @@ import AppError from "../utils/app-error";
 import catchAsync from "../utils/catch-async";
 import passport from "passport";
 import jwt from "jsonwebtoken";
-import { MyUser } from "../constants";
+import { hashPin } from "../utils/hash-password";
 
 export const signup = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -37,13 +37,14 @@ export const signup = catchAsync(
       );
     }
 
+    const hashed = await hashPin(password);
+
     const user = await User.create({
       email,
       fullName: xss(fullName),
-      password,
+      password: hashed,
     });
 
-    user.createAccountVerificationToken();
     await user.save();
 
     return createSendToken(user, 200, res);
@@ -60,18 +61,16 @@ export const googleAuthCallback = [
     session: false,
   }),
   async (req: Request, res: Response) => {
-    const user: MyUser | undefined = req.user;
+    const user: any = req.user;
 
     if (!user) {
       return res.redirect(`${process.env.APP_URL}/login`);
     }
-    const token = jwt.sign(
-      { id: user.id, email: user.email },
-      process.env.JWT_SECRET!,
-      {
-        expiresIn: process.env.JWT_EXPIRES_IN,
-      },
-    );
+    const JWT_SECRET = process.env.JWT_SECRET as string;
+    const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN as string;
+    const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
+      expiresIn: JWT_EXPIRES_IN as any,
+    });
 
     res.redirect(
       `${process.env.APP_URL}?token=${token}&email=${user.email}&name=${user.fullName}`,

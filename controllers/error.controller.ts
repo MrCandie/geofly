@@ -6,6 +6,7 @@ interface AppError extends Error {
 }
 
 const sendErrDev = (err: AppError, res: Response): void => {
+  console.log(err);
   res.status(err.statusCode!).json({
     status: err.status,
     error: err,
