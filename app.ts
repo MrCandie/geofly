@@ -20,7 +20,10 @@ const app = express();
 
 console.log("🔥 APP FILE IS RUNNING");
 
-const allowedOrigins: string[] = ["http://localhost:5173"];
+const allowedOrigins: string[] = [
+  "http://localhost:5173",
+  "https://geofly-frontend-dun.vercel.app",
+];
 
 app.use(
   cors({
